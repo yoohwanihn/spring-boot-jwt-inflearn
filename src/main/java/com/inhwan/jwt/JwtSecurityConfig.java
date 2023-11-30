@@ -20,3 +20,5 @@ public class JwtSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 		http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);	//Security 로직에 Filter를 등록한다
 	}
 }
+
+

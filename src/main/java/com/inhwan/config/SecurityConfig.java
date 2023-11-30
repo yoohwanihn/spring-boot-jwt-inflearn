@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,6 +14,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import com.inhwan.jwt.JwtAccessDeniedHandler;
 import com.inhwan.jwt.JwtAuthenticationEntryPoint;
+import com.inhwan.jwt.JwtSecurityConfig;
 import com.inhwan.jwt.TokenProvider;
 
 @EnableWebSecurity // 스프링 security 지원
@@ -42,14 +44,31 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-
+				// token을 사용하는 방식이기 때문에 csrf disable
+	    		.csrf(csrf -> csrf.disable())
+	    		
+	    		// ExceptionHandler에 클래스들 추가
+	    		.exceptionHandling(exceptionHandling -> exceptionHandling
+	                    .accessDeniedHandler(jwtAccessDeniedHandler)
+	                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+	            )
+	
 				.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
 						.requestMatchers("/api/hello", "/api/authenticate", "/api/signup").permitAll()
 						.requestMatchers(PathRequest.toH2Console()).permitAll().anyRequest().authenticated())
-
+				
+				// 세션을 사용하지 않기 때문에 STATELESS로 설정
+	            .sessionManagement(sessionManagement ->
+	                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	            )
+				
+				
 				// enable h2-console
-				.headers(headers -> headers.frameOptions(options -> options.sameOrigin()));
-
+				.headers(headers -> headers.frameOptions(options -> options.sameOrigin()))
+				
+				// addFilterBefore 메서드로 등록했던 JwtSecurity 클래스도 적용
+				.apply(new JwtSecurityConfig(tokenProvider));
+		
 		return http.build();
 	}
 

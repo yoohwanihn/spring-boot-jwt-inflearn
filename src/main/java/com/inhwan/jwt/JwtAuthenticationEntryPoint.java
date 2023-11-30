@@ -25,4 +25,3 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 }
 
 
-// 필요한 권한이 존재하지 않는 경우에 403 Forbidden Error
