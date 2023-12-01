@@ -15,6 +15,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
+/* Spring Request 앞단에 붙일 Custom Filter */
 public class JwtFilter extends GenericFilterBean {
 	
 	private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
