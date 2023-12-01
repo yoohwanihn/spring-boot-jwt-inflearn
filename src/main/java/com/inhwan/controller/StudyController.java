@@ -12,4 +12,5 @@ public class StudyController {
 	public ResponseEntity<String> hello() {
 		return ResponseEntity.ok("Hello");
 	}
+
 }
